@@ -15,8 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="839.0" prefWidth="1315.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="LookandFeelController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="839.0" prefWidth="1315.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.LookandFeelController">
    <children>
       <SplitPane dividerPositions="0.6142421934501142" prefHeight="839.0" prefWidth="1315.0">
         <items>
@@ -167,7 +166,7 @@
                   </HBox>
                   <TitledPane animated="false" layoutX="14.0" layoutY="615.0" text="Alerts">
                     <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="565.0" />
+                      <AnchorPane fx:id="pageAlerts" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="565.0" />
                     </content>
                   </TitledPane>
                   <AnchorPane layoutX="11.5" layoutY="518.0" AnchorPane.rightAnchor="382.0" />
