@@ -17,7 +17,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="839.0" prefWidth="1315.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.LookandFeelController">
    <children>
-      <SplitPane dividerPositions="0.6142421934501142" prefHeight="839.0" prefWidth="1315.0">
+      <SplitPane dividerPositions="0.5403655750190404" prefHeight="839.0" prefWidth="1315.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
@@ -164,7 +164,7 @@
                         </TitledPane>
                      </children>
                   </HBox>
-                  <TitledPane animated="false" layoutX="14.0" layoutY="615.0" text="Alerts">
+                  <TitledPane animated="false" layoutX="14.0" layoutY="615.0" prefHeight="208.0" prefWidth="676.0" text="Alerts">
                     <content>
                       <AnchorPane fx:id="pageAlerts" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="565.0" />
                     </content>
@@ -176,6 +176,12 @@
                         <Button layoutX="347.0" layoutY="15.0" mnemonicParsing="false" text="Add Container" />
                       <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="178.0" text="Add item" />
                     </buttons>
+                  </ButtonBar>
+                  <ButtonBar layoutX="14.0" layoutY="566.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="31.0" prefWidth="368.0">
+                     <buttons>
+                        <Button fx:id="goToItem" layoutX="347.0" layoutY="15.0" mnemonicParsing="false" text="Go To" />
+                        <Button fx:id="farmScan" mnemonicParsing="false" prefHeight="31.0" prefWidth="178.0" text="Scan Farm" />
+                     </buttons>
                   </ButtonBar>
                </children>
             </AnchorPane>

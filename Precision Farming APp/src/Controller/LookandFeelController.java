@@ -1,18 +1,12 @@
 package Controller;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 
 public class LookandFeelController {
-
-    @FXML
-    private ResourceBundle resources;
-
-    @FXML
-    private URL location;
 
     @FXML
     private TextField detailsHeight;
@@ -38,6 +32,13 @@ public class LookandFeelController {
     @FXML
     private Group farmGrid;
 
-    
+    @FXML
+    private Button farmScan;
+
+    @FXML
+    private Button goToItem;
+
+    @FXML
+    private AnchorPane pageAlerts;
 
 }
