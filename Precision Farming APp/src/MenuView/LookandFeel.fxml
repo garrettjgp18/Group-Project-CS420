@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.TreeView?>
@@ -27,7 +28,7 @@
                           <content>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="459.0" prefWidth="323.0">
                                  <children>
-                                    <TreeView prefHeight="464.0" prefWidth="407.0" />
+                                    <TreeView fx:id="farmHierarchy" prefHeight="463.0" prefWidth="355.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
                           </content>
@@ -36,7 +37,7 @@
                           <content>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="463.0" prefWidth="303.0">
                                  <children>
-                                    <VBox prefHeight="465.0" prefWidth="285.0">
+                                    <VBox fx:id="componentButtons" prefHeight="465.0" prefWidth="285.0">
                                        <children>
                                           <Label prefHeight="18.0" prefWidth="367.0" text="Name" textAlignment="CENTER">
                                              <padding>
@@ -166,15 +167,18 @@
                   </HBox>
                   <TitledPane animated="false" layoutX="14.0" layoutY="615.0" prefHeight="208.0" prefWidth="676.0" text="Alerts">
                     <content>
-                      <AnchorPane fx:id="pageAlerts" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="565.0" />
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="565.0">
+                           <children>
+                              <TextArea fx:id="pageAlerts" layoutX="-2.3000000000000007" layoutY="-0.3000000000000007" prefHeight="180.0" prefWidth="676.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children></AnchorPane>
                     </content>
                   </TitledPane>
                   <AnchorPane layoutX="11.5" layoutY="518.0" AnchorPane.rightAnchor="382.0" />
                   <ButtonBar layoutX="14.0" layoutY="518.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="31.0" prefWidth="368.0">
                     <buttons>
-                        <Button layoutX="267.0" layoutY="15.0" mnemonicParsing="false" prefHeight="31.0" text="Delete" />
-                        <Button layoutX="347.0" layoutY="15.0" mnemonicParsing="false" text="Add Container" />
-                      <Button mnemonicParsing="false" prefHeight="31.0" prefWidth="178.0" text="Add item" />
+                        <Button fx:id="deleteObject" layoutX="267.0" layoutY="15.0" mnemonicParsing="false" prefHeight="31.0" text="Delete" />
+                        <Button fx:id="addContainer" layoutX="347.0" layoutY="15.0" mnemonicParsing="false" onAction="#btnAddContainer" text="Add Container" />
+                      <Button fx:id="addItem" mnemonicParsing="false" prefHeight="31.0" prefWidth="178.0" text="Add item" />
                     </buttons>
                   </ButtonBar>
                   <ButtonBar layoutX="14.0" layoutY="566.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="31.0" prefWidth="368.0">
