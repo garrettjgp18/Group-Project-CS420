@@ -32,5 +32,45 @@ public abstract class Component {
 
     public abstract ArrayList<Component> gatherComponents();
 
+    public abstract void setLength(int length);
+
+    public abstract int getLength();
+
+    public abstract void setWidth(int width);
+     
+
+    public abstract int getWidth();
+      
+
+    public abstract void setHeight(int height);
+     
+
+    public abstract int getHeight();
+     
+
+    public abstract void setX(int xCord);
+    
+
+    public abstract int getX();
+    
+
+    public abstract void setY(int yCord);
+    
+
+    public abstract int getY();
+     
+
+    public abstract void setPrice(int price);
+    
+
+    public abstract int getPrice();
+     
+
+
+    public void updateItem(Component item, boolean b){
+
+    }
+    
+
 
 }

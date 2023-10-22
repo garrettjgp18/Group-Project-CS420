@@ -1,14 +1,11 @@
 package MenuView;
 
-import java.io.EOFException;
 import java.io.IOException;
 
-import Hierarchy.Component;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TreeItem;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 //add a comment to test pull from the working branch

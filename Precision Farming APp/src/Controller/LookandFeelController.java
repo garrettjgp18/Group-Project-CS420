@@ -3,17 +3,18 @@ package Controller;
 import Hierarchy.Component;
 import Hierarchy.Container;
 import Hierarchy.Item;
-import MenuView.App;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 public class LookandFeelController {
 
@@ -51,7 +52,7 @@ public class LookandFeelController {
     private TextField detailsY;
 
     @FXML
-    private Group farmGrid;
+    private Pane farmGrid;
 
     @FXML
     private TreeView<Component> farmHierarchy;
@@ -65,6 +66,10 @@ public class LookandFeelController {
     @FXML
     private TextArea pageAlerts;
 
+    @FXML
+    private Button btnSave;
+
+    //----------------------------------------------------------------
 
     /*
      * Purpose: Initializes the TreeView and it's preset root, container, and example item
@@ -76,49 +81,76 @@ public class LookandFeelController {
     private void initialize(){
 
         // Create object of class
-        Container farm = new Container("Farm", 0, 0, 0, 800, 600 ,0);
-        Container barn = new Container("Barn", 1000, 10, 15, 200, 100, 50);
+        Container farm = new Container("Farm", 800, 600, 600, 0, 0 ,0);
+        Container barn = new Container("Barn", 100, 100, 50, 150, 50, 50000);
         Item chicken = new Item("Chicken", 0, 0, 0, 0, 0, 0);
 
         // Add barn to component array
         farm.addComponent(barn);
         barn.addComponent(chicken);
 
+    
+
         // Create an item of TreeView that passed in objcet of class
         TreeItem<Component> rootNode = new TreeItem<>(farm); // root (DO NOT DELETE NOR DUPLICATE)
         TreeItem<Component> barnNode = new TreeItem<>(barn); // Containers
-        TreeItem<Component> itemNode = new TreeItem<>(chicken); // Items
         
         // Modifiers to root
         farmHierarchy.setRoot(rootNode); //Root will always be the "farm"
         farmHierarchy.getSelectionModel().selectFirst(); //unsure yet
         rootNode.setExpanded(true); //expands on launch automatically
+        barnNode.setExpanded(true);
 
         // Add item to the desired "Container"
-        barnNode.getChildren().add(itemNode); //specify parent node, then what you're adding to said node
         rootNode.getChildren().add(barnNode);
 
 
         // Changes the name of the cells within TreeView to their set name, instead of memory + classpath.
         // https://stackoverflow.com/questions/44210453/how-to-display-only-the-filename-in-a-javafx-treeview
 
-        farmHierarchy.setCellFactory(param -> new TreeCell<Component>() {
-            @Override
-            protected void updateItem(Component item, boolean empty) {
-                super.updateItem(item, empty);
+        // Lambda expression basically denotes that param is the argument, and -> {} signifies a block of code to come
+        // Basically, we're editing the cells here to conver their name to the objects name
+        farmHierarchy.setCellFactory(param -> {
+            TreeCell<Component> cell = new TreeCell<Component>(){
+                @Override
+                protected void updateItem(Component item, boolean empty) {
+                    super.updateItem(item, empty);
         
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item.getName()); 
-                }
+                    if (empty || item == null) {
+                        setText(null);
+                    } else {
+                        setText(item.getName()); 
+                    }
+            }
+        };
+
+        // Here, uses a similar idea to create a component, and uses cell from above to gather 
+        // all data from the TreeView item. Calls it to Details textfields
+        cell.selectedProperty().addListener((checking, selected, next) -> {
+            Component cellItem = cell.getItem();
+
+            if (next && (!cell.isEmpty())) {
+                detailsName.setText(cellItem.getName());
+                detailsLength.setText(String.valueOf(cellItem.getLength()));
+                detailsWidth.setText(String.valueOf(cellItem.getWidth()));
+                detailsHeight.setText(String.valueOf(cellItem.getHeight()));
+                detailsX.setText(String.valueOf(cellItem.getX()));
+                detailsY.setText(String.valueOf(cellItem.getY()));
+                detailsPrice.setText(String.valueOf(cellItem.getPrice()));
             }
         });
+
+        return cell;
+    }); 
+     
+    
     }
 
 
+    //----------------------------------------------------------------
 
     // Button Stuff
+
     // Purpose: Add Contianer to cell depending on user click
     // Guards: Cannot add a container to an item
     @FXML
@@ -131,14 +163,17 @@ public class LookandFeelController {
             pageAlerts.appendText("Cannot add container to an item - Please choose either the root or another container!\n");
         // If not, initilize new Cotainer and add it to the clicked cell
         } else {
-            // TODO 
-            // Add funcitonality to side buttons to set the values of the new container
-            Container newContainer = new Container("New Container", 0, 0, 0, 0, 0, 0);
+            Container newContainer = new Container("New Container", detailsLength.getLength(), 0, 0, check.getValue().getX(), check.getValue().getY(), 0);
             TreeItem<Component> newContain = new TreeItem<>(newContainer);
-
             check.getChildren().add(newContain);
+
+            // Clears grid and redraws all items
+            farmGrid.getChildren().clear();
+            drawItems(newContain);
         }
     }
+
+    //----------------------------------------------------------------
 
     // Purpose: Add an item to a cell depending on if it's a container or the root
     // Guards: Cannot add an item to an item
@@ -153,14 +188,18 @@ public class LookandFeelController {
             pageAlerts.appendText("Cannot add an Item to another Item - please choose a valid Container!\n");
         } else {
             // Otherwise. initialize new Item and add it to the clicked cell.
-            // TODO
-            // Add functionality to side buttons to set the values of the new containe.
-            Item newItem = new Item("New Item", 0, 0, 0, 0, 0, 0);
+            // Automatically sets X and Y cordinate to the container its being added too.
+            Item newItem = new Item("New Item", 0, 0, 0, check.getValue().getX(), check.getValue().getY(), 0);
             TreeItem<Component> newTreeItem = new TreeItem<>(newItem);
-
             check.getChildren().add(newTreeItem);
+
+     
+
         }
     }
+
+
+    //----------------------------------------------------------------
 
     // Purpose: Delete a cell and all it's child cells 
     // Guards: Cannot delete the root
@@ -179,9 +218,94 @@ public class LookandFeelController {
             check.getParent().getValue().deleteComponent(check.getValue());
             // Delete any children cells (if any)
             check.getParent().getChildren().remove(check);
+
+            farmGrid.getChildren().clear();
+            drawItems(farmHierarchy.getRoot());
+
+
         }
     }
 
+    
+    
+    //----------------------------------------------------------------
+    // Saves the changes made in the Details menu
+    @FXML
+    void saveChanges(ActionEvent event) {
+        
+        // Create variables to keep track of the roots width(x) and height(y)
+        int rootsizeX = farmHierarchy.getRoot().getValue().getWidth();
+        int rootSizeY = farmHierarchy.getRoot().getValue().getLength();
+
+        // Create variables that keep track of new coordinates from Details
+        int x = Integer.parseInt(detailsX.getText());
+        int y = Integer.parseInt(detailsY.getText());
+
+        // Initialize component that keeps selected cell/TreeItem 
+        Component item = farmHierarchy.getSelectionModel().getSelectedItem().getValue();
+        
+        // Root shoudl be unchangable - Base Case
+        if (farmHierarchy.getSelectionModel().getSelectedItem().getParent() == null){
+            pageAlerts.appendText("Cannot modify root\n");
+            return; // Terminates save
+        }
+
+        // Ensure modification of X and Y is within range of parent element or root
+        if (x > rootsizeX || y > rootSizeY) {
+            pageAlerts.appendText("Object out of bounds of farm. Please ensure X < 600 and Y < 800\n");
+
+        // Ensure width of container or item do not exceed their parent 
+        // } else if (Integer.parseInt(detailsWidth.getText()) > x || Integer.parseInt(detailsHeight.getText()) > y || Integer.parseInt(detailsLength.getText()) > x) {
+        //     pageAlerts.appendText("Object out of bounds of container. Please ensure Width, Length and Height are less than their parent\n");
+
+        // If all pass, set new inputs to the textfields
+        } else {
+            item.setName(detailsName.getText());
+            item.setLength(Integer.parseInt(detailsLength.getText()));
+            item.setHeight(Integer.parseInt(detailsLength.getText()));
+            item.setWidth((Integer.parseInt(detailsWidth.getText())));
+            item.setX(Integer.parseInt(detailsX.getText()));
+            item.setY(Integer.parseInt(detailsY.getText()));
+            item.setPrice(Integer.parseInt(detailsPrice.getText()));
+
+        }
+
+        farmGrid.getChildren().clear();
+        drawItems(farmHierarchy.getRoot());
+    }
+
+     public void drawFrame (String name, int x, int y, int width, int height, Color rgb) {
+        Rectangle rectangle = new Rectangle(x, y, width, height);
+        rectangle.setStrokeWidth(3);
+        rectangle.setStroke(rgb);
+        
+        farmGrid.getChildren().addAll(rectangle);
+
+    }
+    //TODO: Figure out why the root is being set to black
+    public void drawItems (TreeItem<Component> root ) {
+        
+        // Ensures containers aren't deleted once items are added
+        // No idea why the background turns black
+
+        farmGrid.getChildren().clear();
+
+        drawFrame(root.getValue().getName(), root.getValue().getX(), root.getValue().getY(), root.getValue().getWidth(), root.getValue().getHeight(), Color.BLACK);
+
+        // Gets all TreeView items and redraws them accordingly
+        for (TreeItem<Component> child : root.getChildren()) {
+            if (child.getChildren().isEmpty()) {
+                drawFrame(child.getValue().getName(), child.getValue().getX(), child.getValue().getY(), child.getValue().getWidth(), child.getValue().getHeight(), Color.BLUE);
+            } else {
+                drawItems(child);
+            }
+        }
+    }  
+
+    
+
+
+    // Ignore these, too burnt out to go into fxml and remove them
     @FXML
     void btnHeight(ActionEvent event) {
 
