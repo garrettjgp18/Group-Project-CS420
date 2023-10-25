@@ -37,6 +37,8 @@ public class Drone extends Component{
 
     }
 
+
+
     @Override
     public void addComponent(Component component) {
         throw new ClassCastException();

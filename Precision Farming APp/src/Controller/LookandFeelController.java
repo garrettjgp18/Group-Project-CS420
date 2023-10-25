@@ -22,7 +22,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import javafx.scene.text.Text;
 
 public class LookandFeelController {
 
@@ -78,7 +77,7 @@ public class LookandFeelController {
     private Button btnSave;
 
     // This needs to go but idk where 
-    private Drone drone = new Drone("Drone", 0, 0, 0, 150, 50, 0, null, null);
+    Drone drone = new Drone("Drone", 0, 0, 0, 150, 50, 0, null, null);
     //----------------------------------------------------------------
 
     int CONSTRAIN_WIDTH = 600;
@@ -101,10 +100,9 @@ public class LookandFeelController {
 
 
     
-        // Container farm = new Container("Farm", 0, 0, 0, 0, 0 ,0);
-        // Container barn = new Container("Barn", 100, 100, 50, 150, 50, 50000);
-        Item chicken = new Item("Chicken", 0, 0, 0, 0, 0, 0);
-        Item drone = new Item("Drone", 0, 0, 0, 150, 50, 0);
+        Item chicken = new Item("Chicken", 5, 5, 5, 300, 300, 0);
+        // Insstance of Drone 
+        Drone drone = new Drone("Drone", 10, 10, 10, 150, 50, 1000, null, null);
         
 
         // Add barn to component array
@@ -231,7 +229,7 @@ public class LookandFeelController {
         // Checks to see if selected cell is an instance of the Item class, or if it's not a Container (Aka drone).
         // If so, throw error in Alerts page.
         if (check.getValue() instanceof Item || !(check.getValue() instanceof Container) ) {
-            pageAlerts.appendText("Cannot add an Item to another Item - please choose a valid Container!\n");
+            pageAlerts.appendText("Cannot add an Item to another Item or Drone - please choose a valid Container!\n");
         } else {
             // Otherwise. initialize new Item and add it to the clicked cell.
             // Automatically sets X and Y cordinate to the container its being added too.
@@ -254,6 +252,8 @@ public class LookandFeelController {
 
     // Purpose: Delete a cell and all it's child cells 
     // Guards: Cannot delete the root
+    
+
     @FXML
     void btnDelete(ActionEvent event) {
         // Base Case
@@ -264,17 +264,21 @@ public class LookandFeelController {
             // If something is selected, make sure it isn't the root by checking to see if it has parent cells
         } else if (check.getParent() == null) {
             pageAlerts.appendText("Error: Cannot delete the root!\n");
+
+        // Make sure item being deleted isnt a drone
+        // TODO - deleting drones container deletes drone
+        } else if (check.getValue() instanceof Drone) {
+            pageAlerts.appendText("Cannot delete drone!\n");
         } else {
+
             // If parent cells are detected, delete the selected node
             check.getParent().getValue().deleteComponent(check.getValue());
             // Delete any children cells (if any)
             check.getParent().getChildren().remove(check);
 
-            
-
+            //Clear farmGrid and redraw all shapes within Hiearchy
             farmGrid.getChildren().clear();
             drawItems(farmHierarchy.getRoot());
-
 
         }
     }
@@ -342,7 +346,7 @@ public class LookandFeelController {
         
         // Ensures containers aren't deleted once items are added
         // Initiates sister method to create the shape, as well as set its location and label
-        drawFrame(root.getValue().getName(), root.getValue().getX(), root.getValue().getY(), root.getValue().getWidth(), root.getValue().getHeight(), Color.RED);
+        drawFrame(root.getValue().getName(), root.getValue().getX(), root.getValue().getY(), root.getValue().getWidth(), root.getValue().getHeight(), Color.BLACK);
 
         // Loops through all children nodes of the passed in TreeItem, redrawing them
         for (TreeItem<Component> child : root.getChildren()) {
@@ -363,26 +367,28 @@ public class LookandFeelController {
         rectangle.setStroke(rgb);
         
         //TODO - Make label appear above each container and item
-        Text label = new Text(name);
-        label.setX(x);
-        label.setY(y + 10);
+        // Text label = new Text(name);
+        // label.setX(x);
+        // label.setY(y + -10);
 
         farmGrid.getChildren().addAll(rectangle);
-        //farmGrid.getChuldren().addAll(rectangle, label);
+        //farmGrid.getChildren().addAll(rectangle, label);
 
     }
 
     
     @FXML
-    private ImageView DronePNG;
+    private ImageView DronePNG = new ImageView();
 
     public void DroneLinePath(Component Component) {
+
         PathTransition translate = new PathTransition();
         Path path = new Path();
         translate.setNode(DronePNG);
         translate.setDuration(Duration.seconds(1));
         //setting path
         path.getElements().addAll(new MoveTo(drone.getX(), drone.getY()),new LineTo(Component.getX() - 100, Component.getY()));
+        
         drone.setX(Component.getX());
         drone.setY(Component.getY());
 
@@ -400,8 +406,11 @@ public class LookandFeelController {
             // If something is selected, make sure it isn't the root by checking to see if it has parent cells
         } else if (check.getParent() == null) {
             pageAlerts.appendText("Error: Cannot move drone to the root!\n");
+        } else if (check.getValue() instanceof Drone) {
+            pageAlerts.appendText("Drone cannot go to itself!\n");
         } else {
-                DroneLinePath(check.getValue());
+            // Passes component objcet to sister method to set the drones x and y coordiantes, and calculates its path
+            DroneLinePath(check.getValue());
         }
     }
 
@@ -413,6 +422,7 @@ public class LookandFeelController {
         //set the path (Square with X cross)
         path.getElements().addAll(new MoveTo(drone.getX()-100,drone.getY()), new LineTo(0,500), new LineTo(400,500), new LineTo(400, 0), new LineTo(0,0), new LineTo(400,500), new LineTo(0, 500), new LineTo(400,0), new LineTo(50, 50));
         //always goes back to command center
+        // TODO prevent Command Center from being deleted
         drone.setX(50);
         drone.setY(50);
 

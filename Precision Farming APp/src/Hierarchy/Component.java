@@ -67,9 +67,6 @@ public abstract class Component {
      
 
 
-    public void updateItem(Component item, boolean b){
-
-    }
     
 
 

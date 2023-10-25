@@ -198,7 +198,7 @@
           <AnchorPane minHeight="800.0" minWidth="600.0" prefHeight="837.0" prefWidth="617.0">
                <children>
                   <Pane fx:id="farmGrid" maxHeight="837.0" maxWidth="600.0" minHeight="800.0" minWidth="600.0" prefHeight="837.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                  <ImageView fx:id="DronePNG" fitHeight="93.0" fitWidth="110.0" layoutX="150.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="DronePNG" fitHeight="50" fitWidth="50" layoutX="150.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../Image/drone.png" />
                      </image>
