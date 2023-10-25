@@ -22,6 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import javafx.scene.text.Text;
 
 public class LookandFeelController {
 
@@ -76,10 +77,14 @@ public class LookandFeelController {
     @FXML
     private Button btnSave;
 
-
+    // This needs to go but idk where 
     Drone drone = new Drone("Drone", 0, 0, 0, 150, 50, 0, null, null);
     //----------------------------------------------------------------
 
+    int CONSTRAIN_WIDTH = 600;
+    int CONSTRAIN_LENGTH = 800;
+
+    //----------------------------------------------------------------
     /*
      * Purpose: Initializes the TreeView and it's preset root, container, and example item
      * TODO: Possibly make it read from a file to save cells instead of wiping each run?
@@ -94,6 +99,10 @@ public class LookandFeelController {
         Container barn = new Container("Barn", 100, 100, 50, 300, 300, 50000);
         Container command = new Container("Command Center", 100, 100, 50, 150, 50, 0);
 
+
+    
+        // Container farm = new Container("Farm", 0, 0, 0, 0, 0 ,0);
+        // Container barn = new Container("Barn", 100, 100, 50, 150, 50, 50000);
         Item chicken = new Item("Chicken", 0, 0, 0, 0, 0, 0);
         Item drone = new Item("Drone", 0, 0, 0, 150, 50, 0);
         
@@ -164,13 +173,20 @@ public class LookandFeelController {
                 detailsX.setText(String.valueOf(cellItem.getX()));
                 detailsY.setText(String.valueOf(cellItem.getY()));
                 detailsPrice.setText(String.valueOf(cellItem.getPrice()));
+
+                // Prevents drawnItems from disappearing while a cell is being edited.
+                farmGrid.getChildren().clear();
+                drawItems(farmHierarchy.getRoot());
             }
         });
 
         return cell;
     }); 
      
-    
+        // Will draw rootnode and the barn
+        farmGrid.getChildren().clear();
+        drawItems(barnNode);
+        // drawItems(rootNode);
     }
 
 
@@ -190,13 +206,16 @@ public class LookandFeelController {
             pageAlerts.appendText("Cannot add container to an item - Please choose either the root or another container!\n");
         // If not, initilize new Cotainer and add it to the clicked cell
         } else {
-            Container newContainer = new Container("New Container", detailsLength.getLength(), 0, 0, check.getValue().getX(), check.getValue().getY(), 0);
+            Container newContainer = new Container("New Container", 0, 0, 0, check.getValue().getX(), check.getValue().getY(), 0);
             TreeItem<Component> newContain = new TreeItem<>(newContainer);
+            // Add to ArrayList
+            check.getValue().addComponent(newContainer);
+            // Add to TreeView
             check.getChildren().add(newContain);
 
             // Clears grid and redraws all items
             farmGrid.getChildren().clear();
-            drawItems(newContain);
+            drawItems(farmHierarchy.getRoot());
         }
     }
 
@@ -218,9 +237,14 @@ public class LookandFeelController {
             // Automatically sets X and Y cordinate to the container its being added too.
             Item newItem = new Item("New Item", 0, 0, 0, check.getValue().getX(), check.getValue().getY(), 0);
             TreeItem<Component> newTreeItem = new TreeItem<>(newItem);
+            // Add to TreeView
             check.getChildren().add(newTreeItem);
-
-     
+            // Add to ArrayList
+            check.getValue().addComponent(newItem);
+            // Draw
+            farmGrid.getChildren().clear();
+            drawItems(farmHierarchy.getRoot());
+            
 
         }
     }
@@ -246,6 +270,8 @@ public class LookandFeelController {
             // Delete any children cells (if any)
             check.getParent().getChildren().remove(check);
 
+            
+
             farmGrid.getChildren().clear();
             drawItems(farmHierarchy.getRoot());
 
@@ -261,8 +287,11 @@ public class LookandFeelController {
     void saveChanges(ActionEvent event) {
         
         // Create variables to keep track of the roots width(x) and height(y)
-        int rootsizeX = farmHierarchy.getRoot().getValue().getWidth();
-        int rootSizeY = farmHierarchy.getRoot().getValue().getLength();
+        int rootsizeX = CONSTRAIN_WIDTH;
+        int rootSizeY = CONSTRAIN_LENGTH;
+
+        int containerWidth = Integer.parseInt(detailsWidth.getText());
+        int containerLength = Integer.parseInt(detailsLength.getText());
 
         // Create variables that keep track of new coordinates from Details
         int x = Integer.parseInt(detailsX.getText());
@@ -277,13 +306,15 @@ public class LookandFeelController {
             return; // Terminates save
         }
 
-        // Ensure modification of X and Y is within range of parent element or root
-        if (x > rootsizeX || y > rootSizeY) {
+        // Ensure changing the location (x,y) does not push object out of bounds of farmGrid
+        if (x  > rootsizeX || y > rootSizeY) {
             pageAlerts.appendText("Object out of bounds of farm. Please ensure X < 600 and Y < 800\n");
+            return;
 
         // Ensure width of container or item do not exceed their parent 
-        // } else if (Integer.parseInt(detailsWidth.getText()) > x || Integer.parseInt(detailsHeight.getText()) > y || Integer.parseInt(detailsLength.getText()) > x) {
-        //     pageAlerts.appendText("Object out of bounds of container. Please ensure Width, Length and Height are less than their parent\n");
+        } else if ( x + containerWidth > rootsizeX || y + containerLength > rootSizeY) {
+            pageAlerts.appendText("Object out of bounds. Please ensure X + Width of item do not exceed 600, and Y + Length do not exceed 800\n");
+            return;
 
         // If all pass, set new inputs to the textfields
         } else {
@@ -294,47 +325,58 @@ public class LookandFeelController {
             item.setX(Integer.parseInt(detailsX.getText()));
             item.setY(Integer.parseInt(detailsY.getText()));
             item.setPrice(Integer.parseInt(detailsPrice.getText()));
+            
+            
 
         }
 
         farmGrid.getChildren().clear();
         drawItems(farmHierarchy.getRoot());
-    }
-
-     public void drawFrame (String name, int x, int y, int width, int height, Color rgb) {
-        Rectangle rectangle = new Rectangle(x, y, width, height);
-        rectangle.setStrokeWidth(3);
-        rectangle.setFill(Color.TRANSPARENT);
-        rectangle.setStroke(rgb);
         
-        farmGrid.getChildren().addAll(rectangle);
-
     }
-    //TODO: Figure out why the root is being set to black
+
+    
+
+    // Gets the TreeItem being passed in, and uses drawFrame to extract details and use them
     public void drawItems (TreeItem<Component> root ) {
         
         // Ensures containers aren't deleted once items are added
-        // No idea why the background turns black
+        // Initiates sister method to create the shape, as well as set its location and label
+        drawFrame(root.getValue().getName(), root.getValue().getX(), root.getValue().getY(), root.getValue().getWidth(), root.getValue().getHeight(), Color.RED);
 
-        farmGrid.getChildren().clear();
-
-        drawFrame(root.getValue().getName(), root.getValue().getX(), root.getValue().getY(), root.getValue().getWidth(), root.getValue().getHeight(), Color.BLACK);
-
-        // Gets all TreeView items and redraws them accordingly
+        // Loops through all children nodes of the passed in TreeItem, redrawing them
         for (TreeItem<Component> child : root.getChildren()) {
             if (child.getChildren().isEmpty()) {
                 drawFrame(child.getValue().getName(), child.getValue().getX(), child.getValue().getY(), child.getValue().getWidth(), child.getValue().getHeight(), Color.BLUE);
-                System.out.println(child.getValue().getX() + " " + child.getValue().getY());
             } else {
                 drawItems(child);
             }
         }
+    }  
+
+
+     public void drawFrame (String name, int x, int y, int width, int length, Color rgb) {
+        // https://docs.oracle.com/javase/8/javafx/api/javafx/scene/shape/Rectangle.html
+        Rectangle rectangle = new Rectangle(width, length, Color.TRANSPARENT);
+        rectangle.relocate(x, y);
+        rectangle.setStrokeWidth(3);
+        rectangle.setStroke(rgb);
+        
+        //TODO - Make label appear above each container and item
+        Text label = new Text(name);
+        label.setX(x);
+        label.setY(y + 10);
+
+        farmGrid.getChildren().addAll(rectangle);
+        //farmGrid.getChuldren().addAll(rectangle, label);
+
     }
+
     
     @FXML
     private ImageView DronePNG;
 
-    public void DroneGoTO(Component Component) {
+    public void DroneLinePath(Component Component) {
         PathTransition translate = new PathTransition();
         Path path = new Path();
         translate.setNode(DronePNG);
@@ -343,15 +385,13 @@ public class LookandFeelController {
         path.getElements().addAll(new MoveTo(drone.getX(), drone.getY()),new LineTo(Component.getX() - 100, Component.getY()));
         drone.setX(Component.getX());
         drone.setY(Component.getY());
-        System.out.println(Component.getX());
-        System.out.println(Component.getY());
 
         translate.setPath(path);
         //starting animation
         translate.play();
     }
 
-    public void placeholder(ActionEvent event){
+    public void DroneGoTo(ActionEvent event){
         // Base Case
         // Ensure a component is selected
         TreeItem<Component> check = farmHierarchy.getSelectionModel().getSelectedItem();
@@ -361,7 +401,7 @@ public class LookandFeelController {
         } else if (check.getParent() == null) {
             pageAlerts.appendText("Error: Cannot move drone to the root!\n");
         } else {
-                DroneGoTO(check.getValue());
+                DroneLinePath(check.getValue());
         }
     }
 
@@ -371,7 +411,7 @@ public class LookandFeelController {
         translate.setNode(DronePNG);
         translate.setDuration(Duration.seconds(4));
         //set the path (Square with X cross)
-        path.getElements().addAll(new MoveTo(drone.getX(),drone.getY()), new LineTo(0,700), new LineTo(400,700), new LineTo(400, 0), new LineTo(0,0), new LineTo(400,700), new LineTo(0, 700), new LineTo(400,0), new LineTo(0, 0));
+        path.getElements().addAll(new MoveTo(drone.getX(),drone.getY()), new LineTo(0,500), new LineTo(400,500), new LineTo(400, 0), new LineTo(0,0), new LineTo(400,500), new LineTo(0, 500), new LineTo(400,0), new LineTo(0, 0));
         
         translate.setPath(path);
         //start the transistion

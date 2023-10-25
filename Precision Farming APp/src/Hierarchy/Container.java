@@ -12,6 +12,7 @@ public class Container extends Component {
     private int price;
 
     // Stores containers for later. 
+    // TODO even needed?
     private ArrayList<Component> gatheredComp = new ArrayList<>();
 
     // Constructor for Container

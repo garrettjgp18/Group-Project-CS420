@@ -189,7 +189,7 @@
                   </ButtonBar>
                   <ButtonBar layoutX="14.0" layoutY="566.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="31.0" prefWidth="368.0">
                      <buttons>
-                        <Button fx:id="goToItem" layoutX="347.0" layoutY="15.0" mnemonicParsing="false" onAction="#placeholder" text="Go To" />
+                        <Button fx:id="goToItem" layoutX="347.0" layoutY="15.0" mnemonicParsing="false" onAction="#DroneGoTo" text="Go To" />
                         <Button fx:id="farmScan" mnemonicParsing="false" onAction="#scanFarm" prefHeight="31.0" prefWidth="178.0" text="Scan Farm" />
                      </buttons>
                   </ButtonBar>
