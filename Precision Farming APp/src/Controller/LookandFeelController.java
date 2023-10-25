@@ -3,6 +3,11 @@ package Controller;
 import Hierarchy.Component;
 import Hierarchy.Container;
 import Hierarchy.Item;
+import Hierarchy.Drone;
+import javafx.animation.PathTransition;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -11,10 +16,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import javafx.scene.text.Text;
 
 public class LookandFeelController {
@@ -70,6 +77,8 @@ public class LookandFeelController {
     @FXML
     private Button btnSave;
 
+    // This needs to go but idk where 
+    private Drone drone = new Drone("Drone", 0, 0, 0, 150, 50, 0, null, null);
     //----------------------------------------------------------------
 
     int CONSTRAIN_WIDTH = 600;
@@ -86,30 +95,50 @@ public class LookandFeelController {
     private void initialize(){
 
         // Create object of class
+        Container farm = new Container("Farm", 800, 600, 600, 0, 0 ,0);
+        Container barn = new Container("Barn", 100, 100, 50, 300, 300, 50000);
+        Container command = new Container("Command Center", 100, 100, 50, 150, 50, 0);
+
 
     
-        Container farm = new Container("Farm", 0, 0, 0, 0, 0 ,0);
-        Container barn = new Container("Barn", 100, 100, 50, 150, 50, 50000);
+        // Container farm = new Container("Farm", 0, 0, 0, 0, 0 ,0);
+        // Container barn = new Container("Barn", 100, 100, 50, 150, 50, 50000);
         Item chicken = new Item("Chicken", 0, 0, 0, 0, 0, 0);
+        Item drone = new Item("Drone", 0, 0, 0, 150, 50, 0);
+        
 
         // Add barn to component array
         farm.addComponent(barn);
+        farm.addComponent(command);
         barn.addComponent(chicken);
+        command.addComponent(drone);
 
     
 
         // Create an item of TreeView that passed in objcet of class
         TreeItem<Component> rootNode = new TreeItem<>(farm); // root (DO NOT DELETE NOR DUPLICATE)
         TreeItem<Component> barnNode = new TreeItem<>(barn); // Containers
+        TreeItem<Component> commandNode = new TreeItem<>(command); // Containers
+        TreeItem<Component> droneNode = new TreeItem<>(drone); // Items
+        TreeItem<Component> chickenNode = new TreeItem<>(chicken); // Items
+
+
         
         // Modifiers to root
         farmHierarchy.setRoot(rootNode); //Root will always be the "farm"
         farmHierarchy.getSelectionModel().selectFirst(); //unsure yet
         rootNode.setExpanded(true); //expands on launch automatically
         barnNode.setExpanded(true);
+        commandNode.setExpanded(true);
 
-        // Add item to the desired "Container"
+        // Add containers to root
         rootNode.getChildren().add(barnNode);
+        rootNode.getChildren().add(commandNode);
+
+        //Adding desired items to "Containers"
+        barnNode.getChildren().add(chickenNode);
+        commandNode.getChildren().add(droneNode);
+
 
 
         // Changes the name of the cells within TreeView to their set name, instead of memory + classpath.
@@ -344,6 +373,56 @@ public class LookandFeelController {
     }
 
     
+    @FXML
+    private ImageView DronePNG;
+
+    public void DroneLinePath(Component Component) {
+        PathTransition translate = new PathTransition();
+        Path path = new Path();
+        translate.setNode(DronePNG);
+        translate.setDuration(Duration.seconds(1));
+        //setting path
+        path.getElements().addAll(new MoveTo(drone.getX(), drone.getY()),new LineTo(Component.getX() - 100, Component.getY()));
+        drone.setX(Component.getX());
+        drone.setY(Component.getY());
+
+        translate.setPath(path);
+        //starting animation
+        translate.play();
+    }
+
+    public void DroneGoTo(ActionEvent event){
+        // Base Case
+        // Ensure a component is selected
+        TreeItem<Component> check = farmHierarchy.getSelectionModel().getSelectedItem();
+        if (check.getValue() == null){ //makes sure something is selected
+            pageAlerts.appendText("Error: No cell selected!\n");
+            // If something is selected, make sure it isn't the root by checking to see if it has parent cells
+        } else if (check.getParent() == null) {
+            pageAlerts.appendText("Error: Cannot move drone to the root!\n");
+        } else {
+                DroneLinePath(check.getValue());
+        }
+    }
+
+    public void scanFarm(ActionEvent event){
+        PathTransition translate = new PathTransition();
+        Path path = new Path();
+        translate.setNode(DronePNG);
+        translate.setDuration(Duration.seconds(4));
+        //set the path (Square with X cross)
+        path.getElements().addAll(new MoveTo(drone.getX()-100,drone.getY()), new LineTo(0,500), new LineTo(400,500), new LineTo(400, 0), new LineTo(0,0), new LineTo(400,500), new LineTo(0, 500), new LineTo(400,0), new LineTo(50, 50));
+        //always goes back to command center
+        drone.setX(50);
+        drone.setY(50);
+
+        translate.setPath(path);
+        //start the transistion
+        translate.play();
+    }
+
+    @FXML
+    private Button btnGoTO;
 
 
     // Ignore these, too burnt out to go into fxml and remove them
