@@ -87,8 +87,7 @@ public class LookandFeelController {
 
         // Create object of class
 
-        //TODO - go in and adjust length (y) and width (x) of root so that it doesnt draw black box over whole grid
-        //TODO - Create constant variables and asign to Guards in saveDetails
+    
         Container farm = new Container("Farm", 0, 0, 0, 0, 0 ,0);
         Container barn = new Container("Barn", 100, 100, 50, 150, 50, 50000);
         Item chicken = new Item("Chicken", 0, 0, 0, 0, 0, 0);
@@ -146,6 +145,7 @@ public class LookandFeelController {
                 detailsY.setText(String.valueOf(cellItem.getY()));
                 detailsPrice.setText(String.valueOf(cellItem.getPrice()));
 
+                // Prevents drawnItems from disappearing while a cell is being edited.
                 farmGrid.getChildren().clear();
                 drawItems(farmHierarchy.getRoot());
             }
@@ -154,9 +154,10 @@ public class LookandFeelController {
         return cell;
     }); 
      
-        // Will draw rootnode and the barn, but need to complete the TODO to fix the black grid
+        // Will draw rootnode and the barn
         farmGrid.getChildren().clear();
-        drawItems(rootNode);
+        drawItems(barnNode);
+        // drawItems(rootNode);
     }
 
 
@@ -176,13 +177,16 @@ public class LookandFeelController {
             pageAlerts.appendText("Cannot add container to an item - Please choose either the root or another container!\n");
         // If not, initilize new Cotainer and add it to the clicked cell
         } else {
-            Container newContainer = new Container("New Container", detailsLength.getLength(), 0, 0, check.getValue().getX(), check.getValue().getY(), 0);
+            Container newContainer = new Container("New Container", 0, 0, 0, check.getValue().getX(), check.getValue().getY(), 0);
             TreeItem<Component> newContain = new TreeItem<>(newContainer);
+            // Add to ArrayList
+            check.getValue().addComponent(newContainer);
+            // Add to TreeView
             check.getChildren().add(newContain);
 
             // Clears grid and redraws all items
             farmGrid.getChildren().clear();
-            drawItems(newContain);
+            drawItems(farmHierarchy.getRoot());
         }
     }
 
@@ -204,10 +208,13 @@ public class LookandFeelController {
             // Automatically sets X and Y cordinate to the container its being added too.
             Item newItem = new Item("New Item", 0, 0, 0, check.getValue().getX(), check.getValue().getY(), 0);
             TreeItem<Component> newTreeItem = new TreeItem<>(newItem);
+            // Add to TreeView
             check.getChildren().add(newTreeItem);
-
+            // Add to ArrayList
+            check.getValue().addComponent(newItem);
+            // Draw
             farmGrid.getChildren().clear();
-            drawItems(newTreeItem);
+            drawItems(farmHierarchy.getRoot());
             
 
         }
@@ -234,6 +241,8 @@ public class LookandFeelController {
             // Delete any children cells (if any)
             check.getParent().getChildren().remove(check);
 
+            
+
             farmGrid.getChildren().clear();
             drawItems(farmHierarchy.getRoot());
 
@@ -252,6 +261,9 @@ public class LookandFeelController {
         int rootsizeX = CONSTRAIN_WIDTH;
         int rootSizeY = CONSTRAIN_LENGTH;
 
+        int containerWidth = Integer.parseInt(detailsWidth.getText());
+        int containerLength = Integer.parseInt(detailsLength.getText());
+
         // Create variables that keep track of new coordinates from Details
         int x = Integer.parseInt(detailsX.getText());
         int y = Integer.parseInt(detailsY.getText());
@@ -266,12 +278,14 @@ public class LookandFeelController {
         }
 
         // Ensure changing the location (x,y) does not push object out of bounds of farmGrid
-        if (x > rootsizeX || y > rootSizeY) {
+        if (x  > rootsizeX || y > rootSizeY) {
             pageAlerts.appendText("Object out of bounds of farm. Please ensure X < 600 and Y < 800\n");
+            return;
 
         // Ensure width of container or item do not exceed their parent 
-        } else if ( x + Integer.parseInt(detailsWidth.getText()) > rootsizeX || y + Integer.parseInt(detailsLength.getText()) > rootSizeY) {
+        } else if ( x + containerWidth > rootsizeX || y + containerLength > rootSizeY) {
             pageAlerts.appendText("Object out of bounds. Please ensure X + Width of item do not exceed 600, and Y + Length do not exceed 800\n");
+            return;
 
         // If all pass, set new inputs to the textfields
         } else {
@@ -283,37 +297,25 @@ public class LookandFeelController {
             item.setY(Integer.parseInt(detailsY.getText()));
             item.setPrice(Integer.parseInt(detailsPrice.getText()));
             
+            
 
         }
 
         farmGrid.getChildren().clear();
         drawItems(farmHierarchy.getRoot());
-    }
-
-     public void drawFrame (String name, int x, int y, int width, int height, Color rgb) {
-        // https://docs.oracle.com/javase/8/javafx/api/javafx/scene/shape/Rectangle.html
-        Rectangle rectangle = new Rectangle(width, height, Color.TRANSPARENT);
-        rectangle.relocate(x, y);
-        rectangle.setStrokeWidth(3);
-        rectangle.setStroke(rgb);
         
-        Text label = new Text(name);
-        label.setX(x + 10);
-        farmGrid.getChildren().addAll(rectangle, label);
-
     }
 
+    
 
+    // Gets the TreeItem being passed in, and uses drawFrame to extract details and use them
     public void drawItems (TreeItem<Component> root ) {
         
         // Ensures containers aren't deleted once items are added
-        // No idea why the background turns black
-
-        farmGrid.getChildren().clear();
-
+        // Initiates sister method to create the shape, as well as set its location and label
         drawFrame(root.getValue().getName(), root.getValue().getX(), root.getValue().getY(), root.getValue().getWidth(), root.getValue().getHeight(), Color.RED);
 
-        // Gets all TreeView items and redraws them accordingly
+        // Loops through all children nodes of the passed in TreeItem, redrawing them
         for (TreeItem<Component> child : root.getChildren()) {
             if (child.getChildren().isEmpty()) {
                 drawFrame(child.getValue().getName(), child.getValue().getX(), child.getValue().getY(), child.getValue().getWidth(), child.getValue().getHeight(), Color.BLUE);
@@ -322,6 +324,24 @@ public class LookandFeelController {
             }
         }
     }  
+
+
+     public void drawFrame (String name, int x, int y, int width, int length, Color rgb) {
+        // https://docs.oracle.com/javase/8/javafx/api/javafx/scene/shape/Rectangle.html
+        Rectangle rectangle = new Rectangle(width, length, Color.TRANSPARENT);
+        rectangle.relocate(x, y);
+        rectangle.setStrokeWidth(3);
+        rectangle.setStroke(rgb);
+        
+        //TODO - Make label appear above each container and item
+        Text label = new Text(name);
+        label.setX(x);
+        label.setY(y + 10);
+
+        farmGrid.getChildren().addAll(rectangle);
+        //farmGrid.getChuldren().addAll(rectangle, label);
+
+    }
 
     
 
