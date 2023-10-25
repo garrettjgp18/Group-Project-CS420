@@ -21,6 +21,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class LookandFeelController {
@@ -102,7 +103,7 @@ public class LookandFeelController {
     
         Item chicken = new Item("Chicken", 5, 5, 5, 300, 300, 0);
         // Insstance of Drone 
-        Drone drone = new Drone("Drone", 10, 10, 10, 150, 50, 1000, null, null);
+        Drone drone = new Drone(null, 0, 0, 0, 150, 50, 1000, null, null);
         
 
         // Add barn to component array
@@ -366,12 +367,12 @@ public class LookandFeelController {
         rectangle.setStrokeWidth(3);
         rectangle.setStroke(rgb);
         
-        //TODO - Make label appear above each container and item
-        // Text label = new Text(name);
-        // label.setX(x);
-        // label.setY(y + -10);
+        //TODO - Figure out better constraints to text aren't jumbled
+        Text label = new Text(name);
+        label.setX(rectangle.getWidth() + x);
+        label.setY(y + -10);
 
-        farmGrid.getChildren().addAll(rectangle);
+        farmGrid.getChildren().addAll(rectangle, label);
         //farmGrid.getChildren().addAll(rectangle, label);
 
     }
