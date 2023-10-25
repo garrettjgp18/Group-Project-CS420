@@ -1,5 +1,5 @@
 package Hierarchy;
-
+// this class might be entirely unnecessary
 import java.util.ArrayList;
 
 public class Drone extends Component{

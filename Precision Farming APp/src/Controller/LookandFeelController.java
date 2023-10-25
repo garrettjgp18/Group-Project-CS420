@@ -78,7 +78,7 @@ public class LookandFeelController {
     private Button btnSave;
 
     // This needs to go but idk where 
-    Drone drone = new Drone("Drone", 0, 0, 0, 150, 50, 0, null, null);
+    private Drone drone = new Drone("Drone", 0, 0, 0, 150, 50, 0, null, null);
     //----------------------------------------------------------------
 
     int CONSTRAIN_WIDTH = 600;
@@ -411,8 +411,11 @@ public class LookandFeelController {
         translate.setNode(DronePNG);
         translate.setDuration(Duration.seconds(4));
         //set the path (Square with X cross)
-        path.getElements().addAll(new MoveTo(drone.getX(),drone.getY()), new LineTo(0,500), new LineTo(400,500), new LineTo(400, 0), new LineTo(0,0), new LineTo(400,500), new LineTo(0, 500), new LineTo(400,0), new LineTo(0, 0));
-        
+        path.getElements().addAll(new MoveTo(drone.getX()-100,drone.getY()), new LineTo(0,500), new LineTo(400,500), new LineTo(400, 0), new LineTo(0,0), new LineTo(400,500), new LineTo(0, 500), new LineTo(400,0), new LineTo(50, 50));
+        //always goes back to command center
+        drone.setX(50);
+        drone.setY(50);
+
         translate.setPath(path);
         //start the transistion
         translate.play();
