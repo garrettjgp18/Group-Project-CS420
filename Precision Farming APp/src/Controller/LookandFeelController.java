@@ -25,6 +25,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class LookandFeelController {
+    private static LookandFeelController instance;
 
     @FXML
     private Button addContainer;
@@ -77,42 +78,40 @@ public class LookandFeelController {
     @FXML
     private Button btnSave;
 
-    // This needs to go but idk where 
+    // This needs to go but idk where
     Drone drone = new Drone("Drone", 0, 0, 0, 150, 50, 0, null, null);
-    //----------------------------------------------------------------
+    // ----------------------------------------------------------------
 
     int CONSTRAIN_WIDTH = 600;
     int CONSTRAIN_LENGTH = 800;
 
-    //----------------------------------------------------------------
+    // ----------------------------------------------------------------
     /*
-     * Purpose: Initializes the TreeView and it's preset root, container, and example item
-     * TODO: Possibly make it read from a file to save cells instead of wiping each run?
+     * Purpose: Initializes the TreeView and it's preset root, container, and
+     * example item
+     * TODO: Possibly make it read from a file to save cells instead of wiping each
+     * run?
      * 
-     * It also formats the cells to only display the objects name, instead of its class path and memory location.
+     * It also formats the cells to only display the objects name, instead of its
+     * class path and memory location.
      */
     @FXML
-    private void initialize(){
+    private void initialize() {
 
         // Create object of class
-        Container farm = new Container("Farm", 800, 600, 600, 0, 0 ,0);
+        Container farm = new Container("Farm", 800, 600, 600, 0, 0, 0);
         Container barn = new Container("Barn", 100, 100, 50, 300, 300, 50000);
         Container command = new Container("Command Center", 100, 100, 50, 150, 50, 0);
 
-
-    
         Item chicken = new Item("Chicken", 5, 5, 5, 300, 300, 0);
-        // Insstance of Drone 
+        // Instance of Drone
         Drone drone = new Drone(null, 0, 0, 0, 150, 50, 1000, null, null);
-        
 
         // Add barn to component array
         farm.addComponent(barn);
         farm.addComponent(command);
         barn.addComponent(chicken);
         command.addComponent(drone);
-
-    
 
         // Create an item of TreeView that passed in objcet of class
         TreeItem<Component> rootNode = new TreeItem<>(farm); // root (DO NOT DELETE NOR DUPLICATE)
@@ -121,12 +120,10 @@ public class LookandFeelController {
         TreeItem<Component> droneNode = new TreeItem<>(drone); // Items
         TreeItem<Component> chickenNode = new TreeItem<>(chicken); // Items
 
-
-        
         // Modifiers to root
-        farmHierarchy.setRoot(rootNode); //Root will always be the "farm"
-        farmHierarchy.getSelectionModel().selectFirst(); //unsure yet
-        rootNode.setExpanded(true); //expands on launch automatically
+        farmHierarchy.setRoot(rootNode); // Root will always be the "farm"
+        farmHierarchy.getSelectionModel().selectFirst(); // unsure yet
+        rootNode.setExpanded(true); // expands on launch automatically
         barnNode.setExpanded(true);
         commandNode.setExpanded(true);
 
@@ -134,62 +131,71 @@ public class LookandFeelController {
         rootNode.getChildren().add(barnNode);
         rootNode.getChildren().add(commandNode);
 
-        //Adding desired items to "Containers"
+        // Adding desired items to "Containers"
         barnNode.getChildren().add(chickenNode);
         commandNode.getChildren().add(droneNode);
 
-
-
-        // Changes the name of the cells within TreeView to their set name, instead of memory + classpath.
+        // Changes the name of the cells within TreeView to their set name, instead of
+        // memory + classpath.
         // https://stackoverflow.com/questions/44210453/how-to-display-only-the-filename-in-a-javafx-treeview
 
-        // Lambda expression basically denotes that param is the argument, and -> {} signifies a block of code to come
-        // Basically, we're editing the cells here to conver their name to the objects name
+        // Lambda expression basically denotes that param is the argument, and -> {}
+        // signifies a block of code to come
+        // Basically, we're editing the cells here to conver their name to the objects
+        // name
         farmHierarchy.setCellFactory(param -> {
-            TreeCell<Component> cell = new TreeCell<Component>(){
+            TreeCell<Component> cell = new TreeCell<Component>() {
                 @Override
                 protected void updateItem(Component item, boolean empty) {
                     super.updateItem(item, empty);
-        
+
                     if (empty || item == null) {
                         setText(null);
                     } else {
-                        setText(item.getName()); 
+                        setText(item.getName());
                     }
-            }
-        };
+                }
+            };
 
-        // Here, uses a similar idea to create a component, and uses cell from above to gather 
-        // all data from the TreeView item. Calls it to Details textfields
-        cell.selectedProperty().addListener((checking, selected, next) -> {
-            Component cellItem = cell.getItem();
+            // Here, uses a similar idea to create a component, and uses cell from above to
+            // gather
+            // all data from the TreeView item. Calls it to Details textfields
+            cell.selectedProperty().addListener((checking, selected, next) -> {
+                Component cellItem = cell.getItem();
 
-            if (next && (!cell.isEmpty())) {
-                detailsName.setText(cellItem.getName());
-                detailsLength.setText(String.valueOf(cellItem.getLength()));
-                detailsWidth.setText(String.valueOf(cellItem.getWidth()));
-                detailsHeight.setText(String.valueOf(cellItem.getHeight()));
-                detailsX.setText(String.valueOf(cellItem.getX()));
-                detailsY.setText(String.valueOf(cellItem.getY()));
-                detailsPrice.setText(String.valueOf(cellItem.getPrice()));
+                if (next && (!cell.isEmpty())) {
+                    detailsName.setText(cellItem.getName());
+                    detailsLength.setText(String.valueOf(cellItem.getLength()));
+                    detailsWidth.setText(String.valueOf(cellItem.getWidth()));
+                    detailsHeight.setText(String.valueOf(cellItem.getHeight()));
+                    detailsX.setText(String.valueOf(cellItem.getX()));
+                    detailsY.setText(String.valueOf(cellItem.getY()));
+                    detailsPrice.setText(String.valueOf(cellItem.getPrice()));
 
-                // Prevents drawnItems from disappearing while a cell is being edited.
-                farmGrid.getChildren().clear();
-                drawItems(farmHierarchy.getRoot());
-            }
+                    // Prevents drawnItems from disappearing while a cell is being edited.
+                    farmGrid.getChildren().clear();
+                    drawItems(farmHierarchy.getRoot());
+                }
+            });
+
+            return cell;
         });
 
-        return cell;
-    }); 
-     
         // Will draw rootnode and the barn
         farmGrid.getChildren().clear();
         drawItems(barnNode);
         // drawItems(rootNode);
     }
 
+    public static LookandFeelController getInstance() {
+        if (instance == null) {
+            instance = new LookandFeelController();
+        }
+        return instance;
 
-    //----------------------------------------------------------------
+    }
+
+    // ----------------------------------------------------------------
 
     // Button Stuff
 
@@ -200,12 +206,15 @@ public class LookandFeelController {
         // Base Cases
         // Ensure selected isn't an item - cannot add container to items
         TreeItem<Component> check = farmHierarchy.getSelectionModel().getSelectedItem();
-        // Checks to see if clicked value is an instance of Item, if so throw error into Alerts
-        if (check.getValue() instanceof Item) { 
-            pageAlerts.appendText("Cannot add container to an item - Please choose either the root or another container!\n");
-        // If not, initilize new Cotainer and add it to the clicked cell
+        // Checks to see if clicked value is an instance of Item, if so throw error into
+        // Alerts
+        if (check.getValue() instanceof Item) {
+            pageAlerts.appendText(
+                    "Cannot add container to an item - Please choose either the root or another container!\n");
+            // If not, initilize new Cotainer and add it to the clicked cell
         } else {
-            Container newContainer = new Container("New Container", 0, 0, 0, check.getValue().getX(), check.getValue().getY(), 0);
+            Container newContainer = new Container("New Container", 0, 0, 0, check.getValue().getX(),
+                    check.getValue().getY(), 0);
             TreeItem<Component> newContain = new TreeItem<>(newContainer);
             // Add to ArrayList
             check.getValue().addComponent(newContainer);
@@ -218,7 +227,7 @@ public class LookandFeelController {
         }
     }
 
-    //----------------------------------------------------------------
+    // ----------------------------------------------------------------
 
     // Purpose: Add an item to a cell depending on if it's a container or the root
     // Guards: Cannot add an item to an item
@@ -227,9 +236,10 @@ public class LookandFeelController {
         // Base Case
         // Ensure selected isn't an item - cannot add item to items.
         TreeItem<Component> check = farmHierarchy.getSelectionModel().getSelectedItem();
-        // Checks to see if selected cell is an instance of the Item class, or if it's not a Container (Aka drone).
+        // Checks to see if selected cell is an instance of the Item class, or if it's
+        // not a Container (Aka drone).
         // If so, throw error in Alerts page.
-        if (check.getValue() instanceof Item || !(check.getValue() instanceof Container) ) {
+        if (check.getValue() instanceof Item || !(check.getValue() instanceof Container)) {
             pageAlerts.appendText("Cannot add an Item to another Item or Drone - please choose a valid Container!\n");
         } else {
             // Otherwise. initialize new Item and add it to the clicked cell.
@@ -243,31 +253,29 @@ public class LookandFeelController {
             // Draw
             farmGrid.getChildren().clear();
             drawItems(farmHierarchy.getRoot());
-            
 
         }
     }
 
+    // ----------------------------------------------------------------
 
-    //----------------------------------------------------------------
-
-    // Purpose: Delete a cell and all it's child cells 
+    // Purpose: Delete a cell and all it's child cells
     // Guards: Cannot delete the root
-    
 
     @FXML
     void btnDelete(ActionEvent event) {
         // Base Case
         // Ensure a component is selected
         TreeItem<Component> check = farmHierarchy.getSelectionModel().getSelectedItem();
-        if (check.getValue() == null){ //makes sure something is selected
+        if (check.getValue() == null) { // makes sure something is selected
             pageAlerts.appendText("Error: No cell selected!\n");
-            // If something is selected, make sure it isn't the root by checking to see if it has parent cells
+            // If something is selected, make sure it isn't the root by checking to see if
+            // it has parent cells
         } else if (check.getParent() == null) {
             pageAlerts.appendText("Error: Cannot delete the root!\n");
 
-        // Make sure item being deleted isnt a drone
-        // TODO - deleting drones container deletes drone
+            // Make sure item being deleted isnt a drone
+            // TODO - deleting drones container deletes drone
         } else if (check.getValue() instanceof Drone) {
             pageAlerts.appendText("Cannot delete drone!\n");
         } else {
@@ -277,20 +285,18 @@ public class LookandFeelController {
             // Delete any children cells (if any)
             check.getParent().getChildren().remove(check);
 
-            //Clear farmGrid and redraw all shapes within Hiearchy
+            // Clear farmGrid and redraw all shapes within Hiearchy
             farmGrid.getChildren().clear();
             drawItems(farmHierarchy.getRoot());
 
         }
     }
 
-    
-    
-    //----------------------------------------------------------------
+    // ----------------------------------------------------------------
     // Saves the changes made in the Details menu
     @FXML
     void saveChanges(ActionEvent event) {
-        
+
         // Create variables to keep track of the roots width(x) and height(y)
         int rootsizeX = CONSTRAIN_WIDTH;
         int rootSizeY = CONSTRAIN_LENGTH;
@@ -302,26 +308,28 @@ public class LookandFeelController {
         int x = Integer.parseInt(detailsX.getText());
         int y = Integer.parseInt(detailsY.getText());
 
-        // Initialize component that keeps selected cell/TreeItem 
+        // Initialize component that keeps selected cell/TreeItem
         Component item = farmHierarchy.getSelectionModel().getSelectedItem().getValue();
-        
+
         // Root shoudl be unchangable - Base Case
-        if (farmHierarchy.getSelectionModel().getSelectedItem().getParent() == null){
+        if (farmHierarchy.getSelectionModel().getSelectedItem().getParent() == null) {
             pageAlerts.appendText("Cannot modify root\n");
             return; // Terminates save
         }
 
-        // Ensure changing the location (x,y) does not push object out of bounds of farmGrid
-        if (x  > rootsizeX || y > rootSizeY) {
+        // Ensure changing the location (x,y) does not push object out of bounds of
+        // farmGrid
+        if (x > rootsizeX || y > rootSizeY) {
             pageAlerts.appendText("Object out of bounds of farm. Please ensure X < 600 and Y < 800\n");
             return;
 
-        // Ensure width of container or item do not exceed their parent 
-        } else if ( x + containerWidth > rootsizeX || y + containerLength > rootSizeY) {
-            pageAlerts.appendText("Object out of bounds. Please ensure X + Width of item do not exceed 600, and Y + Length do not exceed 800\n");
+            // Ensure width of container or item do not exceed their parent
+        } else if (x + containerWidth > rootsizeX || y + containerLength > rootSizeY) {
+            pageAlerts.appendText(
+                    "Object out of bounds. Please ensure X + Width of item do not exceed 600, and Y + Length do not exceed 800\n");
             return;
 
-        // If all pass, set new inputs to the textfields
+            // If all pass, set new inputs to the textfields
         } else {
             item.setName(detailsName.getText());
             item.setLength(Integer.parseInt(detailsLength.getText()));
@@ -330,54 +338,52 @@ public class LookandFeelController {
             item.setX(Integer.parseInt(detailsX.getText()));
             item.setY(Integer.parseInt(detailsY.getText()));
             item.setPrice(Integer.parseInt(detailsPrice.getText()));
-            
-            
 
         }
 
         farmGrid.getChildren().clear();
         drawItems(farmHierarchy.getRoot());
-        
+
     }
 
-    
+    // Gets the TreeItem being passed in, and uses drawFrame to extract details and
+    // use them
+    public void drawItems(TreeItem<Component> root) {
 
-    // Gets the TreeItem being passed in, and uses drawFrame to extract details and use them
-    public void drawItems (TreeItem<Component> root ) {
-        
         // Ensures containers aren't deleted once items are added
-        // Initiates sister method to create the shape, as well as set its location and label
-        drawFrame(root.getValue().getName(), root.getValue().getX(), root.getValue().getY(), root.getValue().getWidth(), root.getValue().getHeight(), Color.BLACK);
+        // Initiates sister method to create the shape, as well as set its location and
+        // label
+        drawFrame(root.getValue().getName(), root.getValue().getX(), root.getValue().getY(), root.getValue().getWidth(),
+                root.getValue().getHeight(), Color.BLACK);
 
         // Loops through all children nodes of the passed in TreeItem, redrawing them
         for (TreeItem<Component> child : root.getChildren()) {
             if (child.getChildren().isEmpty()) {
-                drawFrame(child.getValue().getName(), child.getValue().getX(), child.getValue().getY(), child.getValue().getWidth(), child.getValue().getHeight(), Color.BLUE);
+                drawFrame(child.getValue().getName(), child.getValue().getX(), child.getValue().getY(),
+                        child.getValue().getWidth(), child.getValue().getHeight(), Color.BLUE);
             } else {
                 drawItems(child);
             }
         }
-    }  
+    }
 
-
-     public void drawFrame (String name, int x, int y, int width, int length, Color rgb) {
+    public void drawFrame(String name, int x, int y, int width, int length, Color rgb) {
         // https://docs.oracle.com/javase/8/javafx/api/javafx/scene/shape/Rectangle.html
         Rectangle rectangle = new Rectangle(width, length, Color.TRANSPARENT);
         rectangle.relocate(x, y);
         rectangle.setStrokeWidth(3);
         rectangle.setStroke(rgb);
-        
-        //TODO - Figure out better constraints to text aren't jumbled
+
+        // TODO - Figure out better constraints to text aren't jumbled
         Text label = new Text(name);
         label.setX(rectangle.getWidth() + x);
         label.setY(y + -10);
 
         farmGrid.getChildren().addAll(rectangle, label);
-        //farmGrid.getChildren().addAll(rectangle, label);
+        // farmGrid.getChildren().addAll(rectangle, label);
 
     }
 
-    
     @FXML
     private ImageView DronePNG = new ImageView();
 
@@ -387,54 +393,58 @@ public class LookandFeelController {
         Path path = new Path();
         translate.setNode(DronePNG);
         translate.setDuration(Duration.seconds(1));
-        //setting path
-        path.getElements().addAll(new MoveTo(drone.getX(), drone.getY()),new LineTo(Component.getX() - 100, Component.getY()));
-        
+        // setting path
+        path.getElements().addAll(new MoveTo(drone.getX(), drone.getY()),
+                new LineTo(Component.getX() - 100, Component.getY()));
+
         drone.setX(Component.getX());
         drone.setY(Component.getY());
 
         translate.setPath(path);
-        //starting animation
+        // starting animation
         translate.play();
     }
 
-    public void DroneGoTo(ActionEvent event){
+    public void DroneGoTo(ActionEvent event) {
         // Base Case
         // Ensure a component is selected
         TreeItem<Component> check = farmHierarchy.getSelectionModel().getSelectedItem();
-        if (check.getValue() == null){ //makes sure something is selected
+        if (check.getValue() == null) { // makes sure something is selected
             pageAlerts.appendText("Error: No cell selected!\n");
-            // If something is selected, make sure it isn't the root by checking to see if it has parent cells
+            // If something is selected, make sure it isn't the root by checking to see if
+            // it has parent cells
         } else if (check.getParent() == null) {
             pageAlerts.appendText("Error: Cannot move drone to the root!\n");
         } else if (check.getValue() instanceof Drone) {
             pageAlerts.appendText("Drone cannot go to itself!\n");
         } else {
-            // Passes component objcet to sister method to set the drones x and y coordiantes, and calculates its path
+            // Passes component objcet to sister method to set the drones x and y
+            // coordiantes, and calculates its path
             DroneLinePath(check.getValue());
         }
     }
 
-    public void scanFarm(ActionEvent event){
+    public void scanFarm(ActionEvent event) {
         PathTransition translate = new PathTransition();
         Path path = new Path();
         translate.setNode(DronePNG);
         translate.setDuration(Duration.seconds(4));
-        //set the path (Square with X cross)
-        path.getElements().addAll(new MoveTo(drone.getX()-100,drone.getY()), new LineTo(0,500), new LineTo(400,500), new LineTo(400, 0), new LineTo(0,0), new LineTo(400,500), new LineTo(0, 500), new LineTo(400,0), new LineTo(50, 50));
-        //always goes back to command center
+        // set the path (Square with X cross)
+        path.getElements().addAll(new MoveTo(drone.getX() - 100, drone.getY()), new LineTo(0, 500),
+                new LineTo(400, 500), new LineTo(400, 0), new LineTo(0, 0), new LineTo(400, 500), new LineTo(0, 500),
+                new LineTo(400, 0), new LineTo(50, 50));
+        // always goes back to command center
         // TODO prevent Command Center from being deleted
         drone.setX(50);
         drone.setY(50);
 
         translate.setPath(path);
-        //start the transistion
+        // start the transistion
         translate.play();
     }
 
     @FXML
     private Button btnGoTO;
-
 
     // Ignore these, too burnt out to go into fxml and remove them
     @FXML
@@ -449,7 +459,7 @@ public class LookandFeelController {
 
     @FXML
     void btnName(ActionEvent event) {
-        
+
     }
 
     @FXML
