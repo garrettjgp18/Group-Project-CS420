@@ -101,11 +101,12 @@ public class LookandFeelController {
 
         // Create object of class
         Container farm = new Container("Farm", 800, 600, 800, 0, 0, 0);
-        Container barn = new Container("Barn", 100, 100, 100, 300, 300, 50000);
-        Container command = new Container("Command Center", 100, 100, 50, 150, 50, 0);
-        Container milk = new Container("Milk Storage", 50, 50, 50, 300, 350, 0 );
+        Container barn = new Container("Barn", 200, 200, 200, 300, 300, 50000);
+        Container command = new Container("Command Center", 100, 100, 100, 150, 50, 0);
+        Container livestock = new Container("Livestock-area", 50, 50, 50, 300, 300, 0);
 
-        Item chicken = new Item("Chicken", 5, 5, 5, 300, 300, 0);
+        Item milk = new Item("Milk Storage", 50, 50, 50, 300, 450, 0 );
+        Item cow = new Item("Cow", 5, 5, 5, 310, 330, 0);
 
         // Instance of Drone
 
@@ -113,8 +114,9 @@ public class LookandFeelController {
         // Part of composite design pattern - TreeView does most the heavy lifting though
         farm.addComponent(barn);
         farm.addComponent(command);
-        barn.addComponent(chicken);
         barn.addComponent(milk);
+        barn.addComponent(livestock);
+        livestock.addComponent(cow);
         command.addComponent(drone);
 
         // Create an item of TreeView that passed in objcet of class
@@ -122,8 +124,9 @@ public class LookandFeelController {
         TreeItem<Component> barnNode = new TreeItem<>(barn); // Containers
         TreeItem<Component> commandNode = new TreeItem<>(command); // Containers
         TreeItem<Component> droneNode = new TreeItem<>(drone); // Items
-        TreeItem<Component> chickenNode = new TreeItem<>(chicken); // Items
+        TreeItem<Component> cowNode = new TreeItem<>(cow); // Items
         TreeItem<Component> milkStorage = new TreeItem<>(milk);
+        TreeItem<Component> livestockNode = new TreeItem<>(livestock);
 
         // Modifiers to root
         farmHierarchy.setRoot(rootNode); // Root will always be the "farm"
@@ -137,8 +140,9 @@ public class LookandFeelController {
         rootNode.getChildren().add(commandNode);
 
         // Adding desired items to "Containers"
-        barnNode.getChildren().add(chickenNode);
+        barnNode.getChildren().add(livestockNode);
         barnNode.getChildren().add(milkStorage);
+        livestockNode.getChildren().add(cowNode);
         commandNode.getChildren().add(droneNode);
 
         // Changes the name of the cells within TreeView to their set name, instead of
@@ -274,6 +278,16 @@ public class LookandFeelController {
         // Base Case
         // Ensure a component is selected
         TreeItem<Component> check = farmHierarchy.getSelectionModel().getSelectedItem();
+
+        // Makes sure that if a container contains a drone, it cannot be deleted
+        for (TreeItem<Component> childCell : check.getChildren()) { // Iterates through cell to gather children cells
+            Component childComponent = childCell.getValue(); // Sets component as the cell's contained object (aka copys its object)
+            if (childComponent instanceof Drone) { // Checks to see if child cell is a drone
+                pageAlerts.appendText("Error: Cannot delete container that contains a drone!\n");
+                return;
+            }
+        }
+
         if (check.getValue() == null) { // makes sure something is selected
             pageAlerts.appendText("Error: No cell selected!\n");
             // If something is selected, make sure it isn't the root by checking to see if
@@ -284,7 +298,9 @@ public class LookandFeelController {
             // Make sure item being deleted isnt a drone
             // TODO - deleting drones container deletes drone
         } else if (check.getValue() instanceof Drone) {
-            pageAlerts.appendText("Cannot delete drone!\n");
+            pageAlerts.appendText("Error: Cannot delete drone!\n");
+
+
         } else {
 
             // If parent cells are detected, delete the selected node
@@ -297,6 +313,8 @@ public class LookandFeelController {
             drawItems(farmHierarchy.getRoot());
 
         }
+
+        
     }
 
     // ----------------------------------------------------------------
@@ -425,7 +443,7 @@ public class LookandFeelController {
         } else if (check.getValue() instanceof Drone) {
             pageAlerts.appendText("Drone cannot go to itself!\n");
         } else {
-            // Passes component objcet to sister method to set the drones x and y
+            // Passes component object to sister method to set the drones x and y
             // coordiantes, and calculates its path
             DroneLinePath(check.getValue());
         }
@@ -441,7 +459,6 @@ public class LookandFeelController {
                 new LineTo(400, 500), new LineTo(400, 0), new LineTo(0, 0), new LineTo(400, 500), new LineTo(0, 500),
                 new LineTo(400, 0), new LineTo(50, 50));
         // always goes back to command center
-        // TODO prevent Command Center from being deleted
         drone.setX(50);
         drone.setY(50);
 
