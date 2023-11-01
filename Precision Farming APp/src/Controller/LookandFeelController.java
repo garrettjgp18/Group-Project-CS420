@@ -25,6 +25,7 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class LookandFeelController {
+    // Singleton
     private static LookandFeelController instance;
 
     @FXML
@@ -99,15 +100,15 @@ public class LookandFeelController {
     private void initialize() {
 
         // Create object of class
-        Container farm = new Container("Farm", 800, 600, 600, 0, 0, 0);
+        Container farm = new Container("Farm", 800, 600, 800, 0, 0, 0);
         Container barn = new Container("Barn", 100, 100, 50, 300, 300, 50000);
         Container command = new Container("Command Center", 100, 100, 50, 150, 50, 0);
 
         Item chicken = new Item("Chicken", 5, 5, 5, 300, 300, 0);
         // Instance of Drone
-        Drone drone = new Drone(null, 0, 0, 0, 150, 50, 1000, null, null);
 
         // Add barn to component array
+        // Part of composite design pattern
         farm.addComponent(barn);
         farm.addComponent(command);
         barn.addComponent(chicken);
@@ -187,6 +188,7 @@ public class LookandFeelController {
         // drawItems(rootNode);
     }
 
+    // Singleton
     public static LookandFeelController getInstance() {
         if (instance == null) {
             instance = new LookandFeelController();
