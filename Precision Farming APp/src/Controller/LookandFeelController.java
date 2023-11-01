@@ -101,17 +101,20 @@ public class LookandFeelController {
 
         // Create object of class
         Container farm = new Container("Farm", 800, 600, 800, 0, 0, 0);
-        Container barn = new Container("Barn", 100, 100, 50, 300, 300, 50000);
+        Container barn = new Container("Barn", 100, 100, 100, 300, 300, 50000);
         Container command = new Container("Command Center", 100, 100, 50, 150, 50, 0);
+        Container milk = new Container("Milk Storage", 50, 50, 50, 300, 350, 0 );
 
         Item chicken = new Item("Chicken", 5, 5, 5, 300, 300, 0);
+
         // Instance of Drone
 
         // Add barn to component array
-        // Part of composite design pattern
+        // Part of composite design pattern - TreeView does most the heavy lifting though
         farm.addComponent(barn);
         farm.addComponent(command);
         barn.addComponent(chicken);
+        barn.addComponent(milk);
         command.addComponent(drone);
 
         // Create an item of TreeView that passed in objcet of class
@@ -120,6 +123,7 @@ public class LookandFeelController {
         TreeItem<Component> commandNode = new TreeItem<>(command); // Containers
         TreeItem<Component> droneNode = new TreeItem<>(drone); // Items
         TreeItem<Component> chickenNode = new TreeItem<>(chicken); // Items
+        TreeItem<Component> milkStorage = new TreeItem<>(milk);
 
         // Modifiers to root
         farmHierarchy.setRoot(rootNode); // Root will always be the "farm"
@@ -134,6 +138,7 @@ public class LookandFeelController {
 
         // Adding desired items to "Containers"
         barnNode.getChildren().add(chickenNode);
+        barnNode.getChildren().add(milkStorage);
         commandNode.getChildren().add(droneNode);
 
         // Changes the name of the cells within TreeView to their set name, instead of
