@@ -27,6 +27,7 @@ import javafx.util.Duration;
 public class LookandFeelController {
     // Singleton
     private static LookandFeelController instance;
+    private static Drone drone = getInstanceDrone();
 
     @FXML
     private Button addContainer;
@@ -79,8 +80,6 @@ public class LookandFeelController {
     @FXML
     private Button btnSave;
 
-    // This needs to go but idk where
-    Drone drone = new Drone("Drone", 0, 0, 0, 150, 50, 0, null, null);
     // ----------------------------------------------------------------
 
     int CONSTRAIN_WIDTH = 600;
@@ -205,6 +204,12 @@ public class LookandFeelController {
         return instance;
 
     }
+    public static Drone getInstanceDrone(){
+        if (drone == null){
+            drone = new Drone("Drone", 0,0,0,150,50,0,null,null);
+        }
+        return drone;
+    }
 
     // ----------------------------------------------------------------
 
@@ -282,7 +287,7 @@ public class LookandFeelController {
         // Makes sure that if a container contains a drone, it cannot be deleted
         for (TreeItem<Component> childCell : check.getChildren()) { // Iterates through cell to gather children cells
             Component childComponent = childCell.getValue(); // Sets component as the cell's contained object (aka copys its object)
-            if (childComponent instanceof Drone) { // Checks to see if child cell is a drone
+            if (childComponent == getInstanceDrone()) { // Checks to see if child cell is a drone
                 pageAlerts.appendText("Error: Cannot delete container that contains a drone!\n");
                 return;
             }
@@ -297,7 +302,7 @@ public class LookandFeelController {
 
             // Make sure item being deleted isnt a drone
             // TODO - deleting drones container deletes drone
-        } else if (check.getValue() instanceof Drone) {
+        } else if (check.getValue() == getInstanceDrone()) {
             pageAlerts.appendText("Error: Cannot delete drone!\n");
 
 
