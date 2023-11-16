@@ -11,8 +11,7 @@ public class Container extends Component {
     private int yCord;
     private int price;
 
-    // Stores containers for later. 
-    // TODO even needed?
+    // Stores containers for later - Composite Design 
     private ArrayList<Component> gatheredComp = new ArrayList<>();
 
     // Constructor for Container

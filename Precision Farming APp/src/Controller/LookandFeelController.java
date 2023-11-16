@@ -63,6 +63,12 @@ public class LookandFeelController {
     private TextField detailsY;
 
     @FXML
+    private TextField marketPrice;
+
+    @FXML
+    private TextField purchasePrice;
+
+    @FXML
     private Pane farmGrid;
 
     @FXML
@@ -80,6 +86,8 @@ public class LookandFeelController {
     @FXML
     private Button btnSave;
 
+    // This needs to go but idk where
+    Drone drone = new Drone("Drone", 0, 0, 0, 150, 50, 120, null, null);
     // ----------------------------------------------------------------
 
     int CONSTRAIN_WIDTH = 600;
@@ -99,13 +107,13 @@ public class LookandFeelController {
     private void initialize() {
 
         // Create object of class
-        Container farm = new Container("Farm", 800, 600, 800, 0, 0, 0);
+        Container farm = new Container("Farm", 800, 600, 800, 0, 0, 800000);
         Container barn = new Container("Barn", 200, 200, 200, 300, 300, 50000);
-        Container command = new Container("Command Center", 100, 100, 100, 150, 50, 0);
-        Container livestock = new Container("Livestock-area", 50, 50, 50, 300, 300, 0);
+        Container command = new Container("Command Center", 100, 100, 100, 150, 50, 4000);
+        Container livestock = new Container("Livestock-area", 50, 50, 50, 300, 300, 3000);
 
-        Item milk = new Item("Milk Storage", 50, 50, 50, 300, 450, 0 );
-        Item cow = new Item("Cow", 5, 5, 5, 310, 330, 0);
+        Item milk = new Item("Milk Storage", 50, 50, 50, 300, 450, 400 );
+        Item cow = new Item("Cow", 5, 5, 5, 310, 330, 2500);
 
         // Instance of Drone
 
@@ -133,6 +141,7 @@ public class LookandFeelController {
         rootNode.setExpanded(true); // expands on launch automatically
         barnNode.setExpanded(true);
         commandNode.setExpanded(true);
+        livestockNode.setExpanded(true);
 
         // Add containers to root
         rootNode.getChildren().add(barnNode);
@@ -180,6 +189,20 @@ public class LookandFeelController {
                     detailsX.setText(String.valueOf(cellItem.getX()));
                     detailsY.setText(String.valueOf(cellItem.getY()));
                     detailsPrice.setText(String.valueOf(cellItem.getPrice()));
+                    
+                    // TODO:
+                    // Market Value right now gathers the immediate child values
+                    // Need to make distinction between item and container, item's should display their individual
+                    // price in marketValue when clicked.
+
+                    TreeItem<Component> CurrentValue = cell.getTreeItem();
+                    int totalMarketPrice = 0;
+
+                    for (TreeItem<Component> thisNow : CurrentValue.getChildren()) {
+                        totalMarketPrice += CurrentValue.getValue().getPrice() + thisNow.getValue().getPrice();
+                    }
+
+                    marketPrice.setText(String.valueOf(totalMarketPrice));
 
                     // Prevents drawnItems from disappearing while a cell is being edited.
                     farmGrid.getChildren().clear();
@@ -369,6 +392,7 @@ public class LookandFeelController {
             item.setY(Integer.parseInt(detailsY.getText()));
             item.setPrice(Integer.parseInt(detailsPrice.getText()));
 
+            
         }
 
         farmGrid.getChildren().clear();
