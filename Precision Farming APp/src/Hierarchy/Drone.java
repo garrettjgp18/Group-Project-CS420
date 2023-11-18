@@ -10,6 +10,7 @@ public class Drone extends Component{
     private int xCord;
     private int yCord;
     private int price;
+    private int marketPrice;
     //Drone specific properties
     private Component Dronelocation; // Current location of the drone
     private Component DroneDestination; // Where the drone is currently heading (not sure if this is needed)
@@ -26,6 +27,7 @@ public class Drone extends Component{
         this.xCord = xCord;
         this.yCord = yCord;
         this.price = price;
+        this.marketPrice = price;
 
         this.Dronelocation = Dronelocation;
         this.DroneDestination = DroneDestination;
@@ -102,6 +104,15 @@ public class Drone extends Component{
     public int getPrice(){
         return price;
     }
+
+    public void setMarketPrice(int marketPrice){
+        this.marketPrice = marketPrice;
+    }
+
+    public int getMarketPrice(){
+        return marketPrice;
+    }
+
 
     //Drone specific getter and setter methods
     public Component getDronelocation(){

@@ -66,6 +66,10 @@ public abstract class Component {
     public abstract int getPrice();
      
 
+    public abstract void setMarketPrice(int Marketprice);
+    
+
+    public abstract int getMarketPrice();
 
     
 

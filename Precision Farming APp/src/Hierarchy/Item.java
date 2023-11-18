@@ -11,6 +11,7 @@ public class Item extends Component {
     private int yCord;
     private int price;
     
+    private int marketPrice;
 
     public Item(String name, int length, int width, int height, int xCord, int yCord, int price) {
         super(name);
@@ -20,6 +21,7 @@ public class Item extends Component {
         this.xCord = xCord;
         this.yCord = yCord;
         this.price = price;
+        this.marketPrice = price;
     }
 
     @Override
@@ -85,6 +87,14 @@ public class Item extends Component {
     public int getPrice(){
         return price;
     }
+
+    public void setMarketPrice(int marketPrice){
+        this.marketPrice = marketPrice;
+    }
+    public int getMarketPrice(){
+        return marketPrice;
+    }
+
 }
 
 

@@ -29,6 +29,9 @@ public class LookandFeelController {
     private static LookandFeelController instance;
     private static Drone drone = getInstanceDrone();
 
+
+    int farmValue = 0;
+
     @FXML
     private Button addContainer;
 
@@ -87,7 +90,7 @@ public class LookandFeelController {
     private Button btnSave;
 
     // This needs to go but idk where
-    Drone drone = new Drone("Drone", 0, 0, 0, 150, 50, 120, null, null);
+    //Drone drone = new Drone("Drone", 0, 0, 0, 150, 50, 120, null, null);
     // ----------------------------------------------------------------
 
     int CONSTRAIN_WIDTH = 600;
@@ -105,7 +108,7 @@ public class LookandFeelController {
      */
     @FXML
     private void initialize() {
-
+        
         // Create object of class
         Container farm = new Container("Farm", 800, 600, 800, 0, 0, 800000);
         Container barn = new Container("Barn", 200, 200, 200, 300, 300, 50000);
@@ -194,15 +197,27 @@ public class LookandFeelController {
                     // Market Value right now gathers the immediate child values
                     // Need to make distinction between item and container, item's should display their individual
                     // price in marketValue when clicked.
+                    
+                    //Market Value
+                    TreeItem<Component> check = farmHierarchy.getSelectionModel().getSelectedItem();
+                    marketPrice.setText(String.valueOf(marketPriceCalculationTreeTravel(check)));
 
+                    //Purchase Price
                     TreeItem<Component> CurrentValue = cell.getTreeItem();
-                    int totalMarketPrice = 0;
-
+                    int totalPurchasePrice = 0;
                     for (TreeItem<Component> thisNow : CurrentValue.getChildren()) {
-                        totalMarketPrice += CurrentValue.getValue().getPrice() + thisNow.getValue().getPrice();
+                        totalPurchasePrice += CurrentValue.getValue().getPrice() + thisNow.getValue().getPrice();
+                    }
+                    if(check.getValue() instanceof Container){
+                        totalPurchasePrice += check.getValue().getMarketPrice();
+                        totalPurchasePrice -= check.getValue().getPrice();
+                        purchasePrice.setText(String.valueOf(totalPurchasePrice));
+                    }
+                    else{
+                        purchasePrice.setText(String.valueOf(check.getValue().getPrice()));
                     }
 
-                    marketPrice.setText(String.valueOf(totalMarketPrice));
+                    
 
                     // Prevents drawnItems from disappearing while a cell is being edited.
                     farmGrid.getChildren().clear();
@@ -218,7 +233,22 @@ public class LookandFeelController {
         drawItems(barnNode);
         // drawItems(rootNode);
     }
-
+    //marketPriceCalculationTreeTravel will recursively go through the tree to calculate the marketPrice
+    private int marketPriceCalculationTreeTravel(TreeItem<Component> selectedItem) {
+        if (selectedItem.getValue() instanceof Container) {
+            int totalValue = 0;
+            for (TreeItem<Component> child : selectedItem.getChildren()) {
+                selectedItem.getValue().setMarketPrice(totalValue);
+                totalValue += marketPriceCalculationTreeTravel(child);
+            }
+            return totalValue;
+        } else if (selectedItem.getValue() instanceof Item) {
+            return selectedItem.getValue().getMarketPrice();
+        } else {
+            return 0;
+        }
+    }
+    
     // Singleton
     public static LookandFeelController getInstance() {
         if (instance == null) {

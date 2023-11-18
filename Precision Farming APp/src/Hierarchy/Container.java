@@ -10,7 +10,7 @@ public class Container extends Component {
     private int xCord;
     private int yCord;
     private int price;
-
+    private int marketPrice;
     // Stores containers for later - Composite Design 
     private ArrayList<Component> gatheredComp = new ArrayList<>();
 
@@ -90,6 +90,13 @@ public class Container extends Component {
         return price;
     }
 
+
+    public void setMarketPrice(int marketPrice){
+        this.marketPrice = marketPrice;
+    }
+    public int getMarketPrice(){
+        return marketPrice;
+    }
    
 
     
