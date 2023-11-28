@@ -1,14 +1,23 @@
 # Group-Project-CS420
 
-The goal of this project is to make a precision farming application that simulates drone automation on a farm. This is just a placeholder README. The group members are...
+This application is designed to simulate drone flight and automation for precision farming purposes. Precision farming involves using technology to optimize various aspects of agriculture, and our application focuses on leveraging several common software design elements to achieve this. 
+
+The group members are...
 - Garrett Penton
 - Brandal Bryant
 - Damian Tucker
 - Allen Brunk
 
-**IF YOU GET A DIVERGENT BRANCH ERROR, UNCOMMIT YOUR STAGED CHANGES, PULL, THEN COMMIT** <br/>
-<br/>
-**For now, please add your settings.json and your launch.json files to the gitignore file within the repository. Untill or if I figure out another way.**
+# Features
+- **Dyanmic item and item container creation / deletion**
+  - Ability to update attributes such as:
+     - name, location (x, y), size (L * W * H), and price.
+- **Drone flight simulation**
+    - Drone is able to fly to selected item or item containers on a visible plane
+    - Drone is capable of running a full scan of the visible plane
 
-<br/>
-_We probably won't worry about pull request, just make sure you don't completely destroy the repository. If we **really** want to use them to avoid big errors, we can. Up to yall_
+# Technology Used
+- JavaFX and SceneBuilder were used to create the GUI
+- Java was the required language for this project.
+
+    
