@@ -20,4 +20,10 @@ The group members are...
 - JavaFX and SceneBuilder were used to create the GUI
 - Java was the required language for this project.
 
-    
+# How To Run
+- Clone the repository into VSCode
+- Go Here https://gluonhq.com/products/javafx/
+  - Download the SDK file dependent on your system. Save the file somewhere on your machine
+- Open the project, and navigate to refrenced librarys. Add the SDK files.
+- From here, you should be able to run the project. Please refer to the video we used to make JavaFX work below if more clarification is required.
+  - https://www.youtube.com/watch?v=AubJaosfI-0 
