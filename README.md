@@ -27,3 +27,6 @@ The group members are...
 - Open the project, and navigate to refrenced librarys. Add the SDK files.
 - From here, you should be able to run the project. Please refer to the video we used to make JavaFX work below if more clarification is required.
   - https://www.youtube.com/watch?v=AubJaosfI-0 
+
+  # Link to repo (FOR TA)
+  https://github.com/garrettjgp18/Group-Project-CS420.git
